@@ -1,7 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import Navbar from '@/components/Navbar.js'
 import Footer from '@/components/Footer.js'
+import SessionWrapper from "@/components/SessionWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,18 +19,20 @@ export const metadata = {
   description: "A crowdfunding platform",
 };
 
-export default function RootLayout({ children }) {
+export default function UsernameLayout({ children }) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex flex-col bg-black">
-        <Navbar />
-        <div className="flex-1">
-          {children}
-        </div>
-        <Footer />
+      <body className="flex flex-col bg-black min-h-screen">
+        <SessionWrapper>
+          <Navbar />
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
+        </SessionWrapper>
       </body>
     </html>
   );
