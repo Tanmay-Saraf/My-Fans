@@ -1,7 +1,7 @@
 "use client"
-import React from 'react'
+import React,{useEffect} from 'react'
 import Pill from '@/components/Pill'
-import { useSession,signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -10,10 +10,15 @@ const Login = () => {
         {name:'Google',domain:'google'},
         {name:'Github',domain:'github'},
     ]
-    const {data:session} = useSession()
+    const {data:session,status} = useSession()
     const router = useRouter()
-    if(session){
-        router.push('/dasboard')
+    useEffect(()=>{
+      if(status === "authenticated"){
+        router.push('/dashboard')
+    }
+    },[status,router])
+    if (status === "loading" ) {
+        return <div className="text-white text-center mt-20">Loading...</div>
     }
 
     // if(session){
@@ -30,7 +35,8 @@ const Login = () => {
     <div className='text-white mx-auto py-14 max-w-4xl px-6'>
         <Link href={"/"} className='absolute top-8 left-4 md:left-20 text-neutral-400 cursor-pointer hover:text-neutral-500 hover:-translate-x-2 transition-all duration-300'> &larr; Back to Home</Link>
         <h1 className='text-center font-black text-3xl mb-20'>Login to get your fans to support you </h1>
-        <div className='grid md:grid-cols-2 grid-cols-1 gap-6 items-center'>
+        <div className='flex flex-col justify-center items-center gap-6 '>
+            {/* <div className='grid md:grid-cols-2 grid-cols-1 gap-6 items-center'> */}
             {/* <form className='flex flex-col gap-3 md:border-r md:border-neutral-500 md:pr-8' >
                 <label htmlFor="email" className='text-neutral-300 text-sm font-semibold ml-1 '>Email</label>
                 <input className='bg-neutral-600/50 w-full border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-neutral-400 focus:outline-none  focus:ring-1 focus:ring-neutral-300 transition-all ' type="email" placeholder='abc@example.com' name="email" id="email" required/>

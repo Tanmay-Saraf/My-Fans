@@ -1,26 +1,46 @@
 "use client"
 import { useSession } from 'next-auth/react'
+import React ,{useEffect,useState}from 'react'
 import Link from 'next/link'
-import React from 'react'
 
 const UsernameClient = ({username}) => {
-    const {data:session} = useSession()
-    if(!session){
+    const {data:session,status} = useSession()
+    const [notFound,setNotFound] = useState(false)
+    const [dynaData,setDynaData] = useState({username,profilepic:"",coverpic:""})
+    const fillData = async ()=>{
+        const res = await fetch(`/api/creator/${username}`)
+        if(!res.ok){
+            setNotFound(true)
+            return 
+        }
+        const data = await res.json();
+        setDynaData({username:data.username,profilepic:data.profilepic,coverpic:data.coverpic})
+    }
+    useEffect(()=>{
+        if(status==="authenticated"){
+            fillData();
+        }
+    },[status,username])
+    if(status==="loading"){
+        return <div className='text-white mt-70'>Loadings</div>
+    }
+    if(notFound){
         return (
-            <div className='max-w-lg text-white mx-auto mt-70 flex flex-col gap-6'>
-                <p className='text-xl font-bold'>You are <span className='font-black'>NOT</span> logged in , login to see the {username}'s profile</p>
-                <Link href={"/login"} className=' text-center w-full text-lg font-bold hover:bg-neutral-600 hover:-translate-y-2 hover:border hover:border-white/50 bg-neutral-600/30 py-2 rounded-2xl transition-all duration-300 cursor-pointer'>Login</Link>
+            <div className='text-white flex flex-col items-center justify-center mt-40 gap-4'>
+                <h1 className='text-4xl font-black'>404</h1>
+                <p className='text-neutral-400 text-xl'>Creator <span className='font-bold text-white'>@{username}</span> doesn't exist</p>
+                <Link href='/' className='mt-4 px-6 py-2 bg-neutral-800 hover:bg-neutral-700 transition-colors'>Go Home</Link>
             </div>
         )
     }
   return (
     <div className='text-white'>
         <div className="h-80 w-full overflow-hidden relative ">
-          <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="" />
+          <img src={dynaData.coverpic===""?'/hero-bg.jpg':dynaData.coverpic} className="w-full h-full object-cover opacity-60" alt="" />
         </div>
         <div className="relative p-5 mb-3 flex flex-col gap-4 items-center">
             <div className="absolute -top-12 rounded-xl">
-                <img className="rounded-xl w-30 h-30 object-cover" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=200&auto=format&fit=crop" alt="" />
+                <img className="rounded-xl w-30 h-30 object-cover" src={dynaData.profilepic===""?"https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=200&auto=format&fit=crop":dynaData.profilepic}  alt="" />
             </div>
             <div className="info pt-20 gap-4 flex flex-col justify-center items-center">
                 <div className="name tracking-wider text-2xl font-black">@{username}</div>
@@ -32,73 +52,7 @@ const UsernameClient = ({username}) => {
             <div className="supporters gap-3 bg-neutral-800/40 flex flex-col justify-center items-center ml-4 pt-10 rounded-2xl p-3 max-h-130  ">
                 <h2 className='text-xl font-bold'>Supporters</h2>
                 <ul className=' p-10 flex flex-col gap-2 overflow-y-scroll scrollbar-track-neutral-500 scrollbar-thin scrollbar-thumb-neutral-100'>
-                    <li>Hanuman donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
-                    <li>Shubham donated <span className="font-bold">$50</span> </li>
+                    
                 </ul>
             </div>
             <div className="payment bg-neutral-800/40 mr-4 rounded-2xl flex flex-col gap-4 justify-center items-center">

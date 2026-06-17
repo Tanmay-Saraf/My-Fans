@@ -19,15 +19,8 @@ export const metadata = {
 
 export default function LoginLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
       <SessionWrapper>
-        <body className="flex flex-col bg-black">
           {children}
-        </body>
       </SessionWrapper>
-    </html>
   );
 }

@@ -21,11 +21,6 @@ export const metadata = {
 
 export default function DASHBOARDLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="flex flex-col bg-black min-h-screen">
         <SessionWrapper>
           <Navbar />
           <div className="flex-1">
@@ -33,7 +28,5 @@ export default function DASHBOARDLayout({ children }) {
           </div>
           <Footer />
         </SessionWrapper>
-      </body>
-    </html>
   );
 }
