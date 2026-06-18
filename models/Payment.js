@@ -12,22 +12,32 @@ const PaymentSchema = new mongoose.Schema({
     oid:{
         type:String,
         required:true,
+        unique:true,
+    },
+    pid:{
+        type:String,
+        default:"",
     },
     amount:{
         type:Number,
         required:true,
     },
     createdAt:{
-        type:String,
+        type:Date,
         default:Date.now,
     },
     updatedAt:{
-        type:String,
+        type:Date,
         default:Date.now,
     },
-    done:{
-        type:Boolean,
-        default:false,
+    message:{
+        type:String,
+        default:"",
+    },
+    status:{
+        type:String,
+        enum:["pending","completed","failed"],
+        default:"pending",
     }
 })
 

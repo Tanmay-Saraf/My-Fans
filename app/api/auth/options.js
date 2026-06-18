@@ -1,7 +1,6 @@
 import GithubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
 import User from "@/models/User";
-import Payment from "@/models/Payment";
 import connectDb from "@/db/connectDb";
 
 export const authOptions = {

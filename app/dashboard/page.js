@@ -45,10 +45,41 @@ const dashboard = () => {
     return <div className="text-white text-center mt-20">Loading...</div>
   }
 
+  const isValidUrl = (url)=>{
+    try{
+      const newUrl = new URL(url)
+        return (
+            newUrl.protocol==="https:"||newUrl.protocol==="http:"
+        )
+    }catch{
+      return false;
+    }
+  }
 
   const saveProfile = async (e) => {
     e.preventDefault();
     console.log("Save button clicked")
+    const username = form.username.trim()
+    if(username.length<3){
+      alert("username must be at least 3 charcters")
+      return;
+    }
+    if(username.length>20){
+      alert("Username cannot exceed 20 characters")
+      return;
+    }
+    if(!/^[a-zA-Z0-9_]+$/.test(username)){
+      alert("Username can only contain letters, numbers and underscores");
+      return ;
+    }
+    if(form.coverpic && !isValidUrl(form.coverpic)){
+      alert("Invalid cover picture URL")
+      return;
+    }
+    if(form.profilepic && !isValidUrl(form.profilepic)){
+      alert("Invalid profile picture URL")
+      return;
+    }
     const res = await fetch('/api/user', {
       method: "POST",
       headers: {
@@ -64,7 +95,6 @@ const dashboard = () => {
       alert(data.message);
     }
   };
-
   return (
     <div className='text-white pt-20 max-w-2xl mx-auto px-6'>
       <h1 className='text-3xl font-black mb-8'>Welcome to your Dashboard</h1>
@@ -75,11 +105,11 @@ const dashboard = () => {
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="mail" className='text-sm text-neutral-400'>Email</label>
-          <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} type="email" id='mail' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+          <input value={form.email} disabled type="email" id='mail' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-neutral-400 cursor-not-allowed' />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="Username" className='text-sm text-neutral-400'>Username</label>
-          <input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} type="text" id='username' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+          <input value={form.username} onChange={(e) => setForm({...form,username:e.target.value})} type="text" id='username'  className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="Banner" className='text-sm text-neutral-400'>Cover Picture</label>
