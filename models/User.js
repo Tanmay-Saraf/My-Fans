@@ -19,6 +19,14 @@ const UserSchema = new mongoose.Schema({
     coverpic:{
         type:String
     },
+    tagline:{
+        type:String,
+        deault:"",
+    },
+    goal:{
+        type:Number,
+        required:true,
+    },
     razorpayId:{
         type:String,
     },

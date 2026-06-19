@@ -6,8 +6,8 @@ import Payment from "@/models/Payment";
 export async function GET(request,{params}){
     await connectDb();
     const {username} = await params;
-    const user = await User.findOne({username});
-
+    const user = await User.findOne({username}).select("-razorpaySecret");
+    console.log(user)
     if(!user)return NextResponse.json({error:"User not found "},{status:404})
     const payments = await Payment.find({to_user:username,status:"completed"}).sort({amount:-1})
     return NextResponse.json({user,payments});

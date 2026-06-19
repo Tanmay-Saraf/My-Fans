@@ -10,24 +10,28 @@ const dashboard = () => {
     name: "",
     email: "",
     username: "",
+    tagline:"",
+    goal:0,
     profilepic: "",
     coverpic: "",
     razorpayId: "",
     razorpaySecret: "",
   })
+  const [hasRazorpaySecret,setHasRazorpaySecret] = useState(false);
   const fetchUser = async () => {
     const res = await fetch('/api/user');
-    console.log(res)
     const data = await res.json()
-    console.log(data)
+    setHasRazorpaySecret(data.hasRazorpaySecret)
     setForm({
       name: data.name || "",
       email: data.email || "",
       username: data.username || "",
+      tagline:data.tagline||"",
+      goal:data.goal||0,
       profilepic: data.profilepic || "",
       coverpic: data.coverpic || "",
       razorpayId: data.razorpayId || "",
-      razorpaySecret: data.razorpaySecret || "",
+      razorpaySecret: "",
     });
   }
   useEffect(() => {
@@ -80,12 +84,20 @@ const dashboard = () => {
       alert("Invalid profile picture URL")
       return;
     }
+    if(form.tagline.length>100){
+      alert("Tagline cannot exceed 100 charcters")
+      return ;
+    }
+    if(isNaN(form.goal)||Number(form.goal)<0){
+      alert("Goal cannot be less than zero")
+      return ;
+    }
     const res = await fetch('/api/user', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify({...form,goal:Number(form.goal)}),
     });
     const data = await res.json();
     if (data.success) {
@@ -108,8 +120,16 @@ const dashboard = () => {
           <input value={form.email} disabled type="email" id='mail' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-neutral-400 cursor-not-allowed' />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="Username" className='text-sm text-neutral-400'>Username</label>
+          <label htmlFor="username" className='text-sm text-neutral-400'>Username</label>
           <input value={form.username} onChange={(e) => setForm({...form,username:e.target.value})} type="text" id='username'  className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="tagline" className='text-sm text-neutral-400'>Tagline</label>
+          <input value={form.tagline} onChange={(e) => setForm({...form,tagline:e.target.value})} type="text" id='tagline'  className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="goal" className='text-sm text-neutral-400'>Goal</label>
+          <input value={form.goal} onChange={(e) => setForm({...form,goal:e.target.value})} type="number" min={0} id='goal'  className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="Banner" className='text-sm text-neutral-400'>Cover Picture</label>
@@ -125,7 +145,7 @@ const dashboard = () => {
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="RazorPay_SECRET" className='text-sm text-neutral-400'>Razorpay SECRET</label>
-          <input value={form.razorpaySecret} onChange={(e) => setForm({ ...form, razorpaySecret: e.target.value })} type="text" id='RazorPay_SECRET' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+          <input placeholder={hasRazorpaySecret?"Secret Saved":"Enter Razorpay Secret"} value={form.razorpaySecret} onChange={(e) => setForm({ ...form, razorpaySecret: e.target.value })} type="password" id='RazorPay_SECRET' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
         </div>
         <button type='submit' className='w-full bg-neutral-600 hover:bg-neutral-600/50 text-white font-bold py-3 rounded-lg mt-4 transition-all cursor-pointer'>Save Changes</button>
       </form>

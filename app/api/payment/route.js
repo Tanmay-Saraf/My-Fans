@@ -2,10 +2,11 @@ import connectDb from "@/db/connectDb";
 import { NextResponse } from "next/server";
 import Payment from "@/models/Payment";
 import crypto from 'crypto'
+import User from "@/models/User";
 
-const isValidId = ({oid,pid,signature})=>{
+const isValidId = ({oid,pid,signature,secret})=>{
     const body = oid+"|"+pid;
-    const expectedSignature = crypto.createHmac("sha256",process.env.KEY_SECRET).update(body).digest("hex");
+    const expectedSignature = crypto.createHmac("sha256",secret).update(body).digest("hex");
     if(expectedSignature !== signature){
         return false
     }else return true;
@@ -20,7 +21,7 @@ export async function POST(request){
             message:"Payment information not found"
         },{status:400})
     }
-    const payment = Payment.findOne({oid:body.oid})
+    const payment = await Payment.findOne({oid:body.oid})
     if(!payment){
         return NextResponse.json({
             success:false,
@@ -33,7 +34,8 @@ export async function POST(request){
             message:"Payment already processed"
         },{status:400})
     }
-    if(!isValidId({oid:body.oid,pid:body.pid,signature:body.signature})){
+    const creator = await User.findOne({username:payment.to_user});
+    if(!isValidId({oid:body.oid,pid:body.pid,signature:body.signature,secret:creator.razorpaySecret})){
         return NextResponse.json({
             success:false,
             message:"Payment verification failed"

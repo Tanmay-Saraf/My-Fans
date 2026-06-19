@@ -26,7 +26,7 @@ export async function POST(request) {
             }, { status: 401 })
         }
         const body = await request.json()
-        const { name, username, profilepic, coverpic, razorpayId, razorpaySecret, } = body;
+        const { name, username,tagline,goal, profilepic, coverpic, razorpayId, razorpaySecret, } = body;
         const reserved = ["login", "dashboard", "api"];
         if (username.length < 3) {
             return NextResponse.json({
@@ -52,17 +52,29 @@ export async function POST(request) {
                 message: "Username not available"
             }, { status: 400 })
         }
-        if (form.coverpic && !isValidUrl(form.coverpic)) {
+        if (coverpic && !isValidUrl(coverpic)) {
             return NextResponse.json({
                 success: false,
                 message: "Invalid cover picture url"
             }, { status: 400 })
         }
-        if (form.profilepic && !isValidUrl(form.profilepic)) {
+        if (profilepic && !isValidUrl(profilepic)) {
             return NextResponse.json({
                 success: false,
                 message: "Invalid profile picture url"
             }, { status: 400 })
+        }
+        if(isNaN(goal)||goal<0){
+            return NextResponse.json({
+                success:false,
+                message:"Invalid goal"
+            },{status:400})
+        }
+        if(tagline.length>100){
+            return NextResponse.json({
+                success:false,
+                message:"Tagline cannot exceed 100 charachters"
+            },{status:400})
         }
         const existingUser = await User.findOne({ username: username })
         const email = session.user.email
@@ -72,16 +84,21 @@ export async function POST(request) {
                 message: "Username already taken"
             }, { status: 400 })
         }
+        const updateData = {
+            name,
+            username,
+            profilepic,
+            coverpic,
+            tagline,
+            goal,
+            razorpayId,
+        };
+        if(razorpaySecret?.trim()){
+            updateData.razorpaySecret = razorpaySecret;
+        }
         await User.findOneAndUpdate(
             { email },
-            {
-                name,
-                username,
-                profilepic,
-                coverpic,
-                razorpayId,
-                razorpaySecret,
-            },
+            updateData,
             {
                 upsert: true,
                 new: true
@@ -112,5 +129,16 @@ export async function GET(request) {
     console.log(session);
     const user = await User.findOne({ email: session.user.email })
     if (!user) return NextResponse.json({})
-    return NextResponse.json(user)
+    return NextResponse.json({
+        _id:user.id,
+        name:user.name,
+        email:user.email,
+        username:user.username,
+        tagline:user.tagline,
+        goal:user.goal,
+        profilepic:user.profilepic,
+        coverpic:user.coverpic,
+        razorpayId:user.razorpayId,
+        hasRazorpaySecret: !!user.razorpaySecret
+    })
 }
