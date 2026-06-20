@@ -48,7 +48,7 @@ const Navbar = () => {
       setLoading(true);
       const res = await fetch(`/api/creators?q=${encodeURIComponent(query)}&sendAll=true`)
       const data = await res.json();
-      setResults(data);
+      setResults(data.creators);
       setLoading(false);
     }, 300)
 
@@ -67,7 +67,7 @@ const Navbar = () => {
     <nav className='fixed top-0 left-0 w-full z-50 flex justify-center items-center gap-10 px-16 py-4 border-b border-white/6 text-white'>
       <ul className='flex items-center justify-center gap-8 text-sm text-white/40'>
         <li className='hover:text-white/70 cursor-pointer transition-colors'> <Link href={'/'}>Home</Link> </li>
-        <li className='hover:text-white/70 cursor-pointer transition-colors'>About</li>
+        <li className='hover:text-white/70 cursor-pointer transition-colors'> <Link href={'/creators'}>Creators</Link> </li>
         <li title='search creators' ref={searchRef} className='relative '>
           {!searchOpen ? (
             <button onClick={() => setSearchOpen(true)} className='text-xl flex items-center'><CiSearch /></button>

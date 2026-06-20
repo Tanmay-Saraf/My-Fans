@@ -13,8 +13,11 @@
                 $options: "i"
             }
         })
+        const totalCreators = users.length;
         const allNeed = searchParams.get("sendAll") || "false";
         const creators = [];
+        const limit = Number(searchParams.get("limit"))||0;
+        const page = Number(searchParams.get("page"))||1;
         for (const user of users) {
             if (allNeed==="true") {
                 creators.push({
@@ -32,6 +35,7 @@
                     name: user.name,
                     username: user.username,
                     profilepic: user.profilepic,
+                    goal:user.goal,
                     coverpic: user.coverpic,
                     totalSupporters,
                     totalAmount,
@@ -39,9 +43,16 @@
             }
         }
         if(allNeed==="false"){creators.sort((a, b) => b.totalAmount - a.totalAmount)}
-        const limit = Number(searchParams.get("limit"));
         if (limit && limit > 0) {
-            return NextResponse.json(creators.slice(0, limit));
+            const start = (page-1)*limit;
+            const end = start+limit
+            return NextResponse.json({
+                creators: creators.slice(start,end),
+                totalCreators
+            });
         }
-        return NextResponse.json(creators);
+        return NextResponse.json({
+            creators:creators,
+            totalCreators
+        });
     }

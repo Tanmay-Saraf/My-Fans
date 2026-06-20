@@ -1,19 +1,29 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import Card from "@/components/Card";
+import Link from "next/link";
 
 export default function Home() {
 
   const [creators,setCreators] = useState([]);
+  const [stats,setStats] = useState();
 
   const fetchCreatorsData = async ()=>{
     const res = await fetch('/api/creators?limit=3')
     const data = await res.json()
-    setCreators(data)
+    setCreators(data.creators)
+  }
+
+  const fetchStats = async ()=>{
+    const res = await fetch('/api/stats');
+    const data = await res.json();
+    console.log(data);
+    setStats(data);
   }
 
   useEffect(() => {
     fetchCreatorsData();
+    fetchStats();
   }, [])
   
 
@@ -25,20 +35,20 @@ export default function Home() {
           <h1 className=" max-w-lg font-black text-4xl text-center">Fund the work you actually care about</h1>
           <div className="tagline max-w-md text-center mt-4 mb-6 text-lg text-neutral-300">MyFans lets you support the writers, artists, and builders doing their best work directly, no middlemen</div>
           <div className="buttons grid grid-cols-2 gap-4">
-            <button className="font-bold text-md py-2 px-4 rounded-lg border border-white/50 cursor-pointer hover:bg-neutral-500/30 transition-colors ">Start supporting</button>
-            <button className="font-bold text-md py-2 px-4 rounded-lg border border-white/50 cursor-pointer hover:bg-neutral-500/30 transition-colors ">Apply as a creator</button>
+            <Link href={'/creators'} className="font-bold text-md py-2 px-4 rounded-lg border border-white/50 cursor-pointer hover:bg-neutral-500/30 transition-colors ">Start supporting</Link>
+            <Link href={'/dashboard'} className="font-bold text-md py-2 px-4 rounded-lg border border-white/50 cursor-pointer hover:bg-neutral-500/30 transition-colors ">Apply as a creator</Link>
           </div>
           <div className="stats grid grid-cols-3 gap-10 mt-8">
             <div className="stat flex flex-col items-center gap-1">
-              <span className="text-2xl block font-black">₹2.4Cr</span>
+              <span className="text-2xl block font-black">₹{stats?.totalRaised||0}</span>
               <span className="text-sm text-neutral-300">paid to creators</span>
             </div>
             <div className="stat flex flex-col items-center gap-1">
-              <span className="text-2xl block font-black">14K+</span>
+              <span className="text-2xl block font-black">{stats?.totalSupporters||0}</span>
               <span className="text-sm text-neutral-300">active supporters</span>
             </div>
             <div className="stat flex flex-col items-center gap-1">
-              <span className="text-2xl block font-black">340</span>
+              <span className="text-2xl block font-black">{stats?.totalCreators||0}</span>
               <span className="text-sm text-neutral-300">creators funded</span>
             </div>
           </div>
@@ -54,7 +64,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {creators.length===0?(
             <p className="text-neutral-400">No Creators Yet</p>
-          ):(creators.map(item=><Card key={item._id} name={item.name} username={item.username} coverpic={item.coverpic} profilepic={item.profilepic} totalSupporters={item.totalSupporters} percentGoal={(item.totalAmount/100000)*100}/>))}
+          ):(creators.map(item=><Card key={item._id} name={item.name} username={item.username} coverpic={item.coverpic} profilepic={item.profilepic} totalSupporters={item.totalSupporters} percentGoal={item.goal>0?(item.totalAmount/item.goal)*100:0}/>))}
           {/* <div className="card bg-neutral-900/80 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-2xl hover:-translate-y-2 transition-all duration-300 min-w-xs max-w-lg mx-auto">
             <div className="h-30 w-full rounded-t-2xl overflow-hidden relative ">
               <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="" />
@@ -143,9 +153,9 @@ export default function Home() {
           <div className="card bg-neutral-900/70 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-2xl w-full max-w-sm ">
             <div className="flex gap-6 justify-center items-center mb-2">
               <img className="rounded-xl w-20 h-20 object-cover" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=200&auto=format&fit=crop" alt="" />
-              <h1 className="font-bold text-xl text-center ">Show XYZ some love</h1>
+              <h1 className="font-bold text-xl text-center ">Show your favourite creators some love</h1>
             </div>
-            <button className="w-full font-bold text-md py-2 px-4 rounded-lg bg-violet-600 hover:bg-violet-700 transition-colors mt-4">Support</button>
+            <Link className="w-full font-bold text-md py-2 px-4 rounded-lg bg-violet-600 hover:bg-violet-700 transition-colors mt-4" href={'/creators'}>Support</Link>
           </div>
         </div>
       </div>
