@@ -7,12 +7,17 @@
         await connectDb()
         const { searchParams } = new URL(request.url);
         const search = searchParams.get("q") || "";
-        const users = await User.find({
-            username: {
+        const tag = searchParams.get("tag")||"All";
+        const query = {
+            username:{
                 $regex: search,
-                $options: "i"
+                $options:"i"
             }
-        })
+        }
+        if(tag!=="All"){
+            query.tag = tag;
+        }
+        const users = await User.find(query);
         const totalCreators = users.length;
         const allNeed = searchParams.get("sendAll") || "false";
         const creators = [];
@@ -24,6 +29,7 @@
                     _id:user._id,
                     name: user.name,
                     username: user.username,
+                    tag: user.tag,
                     profilepic: user.profilepic,
                 })
             } else if(allNeed==="false") {
@@ -36,6 +42,7 @@
                     username: user.username,
                     profilepic: user.profilepic,
                     goal:user.goal,
+                    tag:user.tag,
                     coverpic: user.coverpic,
                     totalSupporters,
                     totalAmount,

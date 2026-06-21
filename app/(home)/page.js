@@ -64,7 +64,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {creators.length===0?(
             <p className="text-neutral-400">No Creators Yet</p>
-          ):(creators.map(item=><Card key={item._id} name={item.name} username={item.username} coverpic={item.coverpic} profilepic={item.profilepic} totalSupporters={item.totalSupporters} percentGoal={item.goal>0?(item.totalAmount/item.goal)*100:0}/>))}
+          ):(creators.map(item=><Card key={item._id} name={item.name} username={item.username} tag={item.tag} coverpic={item.coverpic} profilepic={item.profilepic} totalSupporters={item.totalSupporters} percentGoal={item.goal>0?(item.totalAmount/item.goal)*100:0}/>))}
           {/* <div className="card bg-neutral-900/80 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-2xl hover:-translate-y-2 transition-all duration-300 min-w-xs max-w-lg mx-auto">
             <div className="h-30 w-full rounded-t-2xl overflow-hidden relative ">
               <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="" />

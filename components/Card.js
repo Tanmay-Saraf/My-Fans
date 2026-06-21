@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-const Card = ({name,username,profilepic,coverpic,percentGoal,totalSupporters}) => {
+const Card = ({name,username,tag,profilepic,coverpic,percentGoal,totalSupporters}) => {
     return (
         <div className="card bg-neutral-900/80 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-2xl hover:-translate-y-2 transition-all duration-300 min-w-xs max-w-lg mx-auto">
             <div className="h-30 w-full rounded-t-2xl overflow-hidden relative ">
@@ -11,9 +11,9 @@ const Card = ({name,username,profilepic,coverpic,percentGoal,totalSupporters}) =
                 <div className="absolute -top-8 left-5 rounded-xl">
                     <img className="rounded-xl w-16 h-16 object-cover" src={!profilepic?"https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=200&auto=format&fit=crop":profilepic} alt="" />
                 </div>
-                {/* <div className="flex justify-end mb-2">
-                    <span className="text-xs font-bold uppercase tracking-widest ">Open Source</span>
-                </div> */}
+                <div className="flex justify-end mb-2">
+                    <span className="text-xs bg-neutral-800 font-bold uppercase tracking-widest p-2 rounded-xl border border-white/50 ">{tag}</span>
+                </div>
                 <div className="flex flex-col mt-3 mb-3">
                     <h1 className="font-bold text-xl text-white">{name}</h1>
                     <Link href={`/${username}`} className='font-semibold text-md text-neutral-300'>@{username}</Link>

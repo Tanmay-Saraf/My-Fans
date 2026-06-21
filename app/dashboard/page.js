@@ -10,14 +10,15 @@ const dashboard = () => {
     name: "",
     email: "",
     username: "",
-    tagline:"",
-    goal:0,
+    tagline: "",
+    tag: "",
+    goal: 0,
     profilepic: "",
     coverpic: "",
     razorpayId: "",
     razorpaySecret: "",
   })
-  const [hasRazorpaySecret,setHasRazorpaySecret] = useState(false);
+  const [hasRazorpaySecret, setHasRazorpaySecret] = useState(false);
   const fetchUser = async () => {
     const res = await fetch('/api/user');
     const data = await res.json()
@@ -26,8 +27,9 @@ const dashboard = () => {
       name: data.name || "",
       email: data.email || "",
       username: data.username || "",
-      tagline:data.tagline||"",
-      goal:data.goal||0,
+      tagline: data.tagline || "",
+      tag: data.tag || "Developer",
+      goal: data.goal || 0,
       profilepic: data.profilepic || "",
       coverpic: data.coverpic || "",
       razorpayId: data.razorpayId || "",
@@ -49,13 +51,13 @@ const dashboard = () => {
     return <div className="text-white text-center mt-20">Loading...</div>
   }
 
-  const isValidUrl = (url)=>{
-    try{
+  const isValidUrl = (url) => {
+    try {
       const newUrl = new URL(url)
-        return (
-            newUrl.protocol==="https:"||newUrl.protocol==="http:"
-        )
-    }catch{
+      return (
+        newUrl.protocol === "https:" || newUrl.protocol === "http:"
+      )
+    } catch {
       return false;
     }
   }
@@ -64,40 +66,40 @@ const dashboard = () => {
     e.preventDefault();
     console.log("Save button clicked")
     const username = form.username.trim()
-    if(username.length<3){
+    if (username.length < 3) {
       alert("username must be at least 3 charcters")
       return;
     }
-    if(username.length>20){
+    if (username.length > 20) {
       alert("Username cannot exceed 20 characters")
       return;
     }
-    if(!/^[a-zA-Z0-9_]+$/.test(username)){
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
       alert("Username can only contain letters, numbers and underscores");
-      return ;
+      return;
     }
-    if(form.coverpic && !isValidUrl(form.coverpic)){
+    if (form.coverpic && !isValidUrl(form.coverpic)) {
       alert("Invalid cover picture URL")
       return;
     }
-    if(form.profilepic && !isValidUrl(form.profilepic)){
+    if (form.profilepic && !isValidUrl(form.profilepic)) {
       alert("Invalid profile picture URL")
       return;
     }
-    if(form.tagline.length>100){
+    if (form.tagline.length > 100) {
       alert("Tagline cannot exceed 100 charcters")
-      return ;
+      return;
     }
-    if(isNaN(form.goal)||Number(form.goal)<0){
+    if (isNaN(form.goal) || Number(form.goal) < 0) {
       alert("Goal cannot be less than zero")
-      return ;
+      return;
     }
     const res = await fetch('/api/user', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({...form,goal:Number(form.goal)}),
+      body: JSON.stringify({ ...form, goal: Number(form.goal) }),
     });
     const data = await res.json();
     if (data.success) {
@@ -107,9 +109,31 @@ const dashboard = () => {
       alert(data.message);
     }
   };
+
+  const fields = ["name", "username", "tagline", "tag", "goal", "profilepic", "coverpic", "razorpayId", "razorpaySecret"];
+  const percentFilled = () => {
+    const len = fields.reduce((acc, item) => {
+      if(item==="razorpaySecret"){
+        return hasRazorpaySecret?acc+1:acc;
+      }
+      if(item === "goal"){
+        return Number(form.goal)>0?acc+1:acc;
+      }
+      if(form[item]&&form[item]!=="")return acc+1
+      return acc;
+    }, 0)
+    return Math.round((len / fields.length)*100);
+  }
   return (
     <div className='text-white pt-20 max-w-2xl mx-auto px-6'>
       <h1 className='text-3xl font-black mb-8'>Welcome to your Dashboard</h1>
+      <div className="flex justify-between mb-2">
+        <span className="text-sm font-semibold">Profile Completion</span>
+        <span className="text-sm font-semibold">{percentFilled()}%</span>
+      </div>
+      <div className="bar h-2 bg-neutral-800 rounded-full mb-2 ">
+        <div style={{ width: `${percentFilled()}%` }} className="progress rounded-full bg-violet-600 h-2"></div>
+      </div>
       <form onSubmit={(e) => saveProfile(e)} className='flex flex-col gap-4 bg-neutral-900/50 p-6 rounded-2xl border border-white/10'>
         <div className='flex flex-col gap-1'>
           <label htmlFor="name" className='text-sm text-neutral-400'>Name</label>
@@ -121,15 +145,27 @@ const dashboard = () => {
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="username" className='text-sm text-neutral-400'>Username</label>
-          <input value={form.username} onChange={(e) => setForm({...form,username:e.target.value})} type="text" id='username'  className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+          <input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} type="text" id='username' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="tagline" className='text-sm text-neutral-400'>Tagline</label>
-          <input value={form.tagline} onChange={(e) => setForm({...form,tagline:e.target.value})} type="text" id='tagline'  className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+          <input value={form.tagline} onChange={(e) => setForm({ ...form, tagline: e.target.value })} type="text" id='tagline' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="tag" className='text-sm text-neutral-400'>Tag</label>
+          <select value={form.tag} className=' bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' onChange={(e) => setForm({ ...form, tag: e.target.value })} name="tag" id="tag">
+            <option value="Developer">Developer</option>
+            <option value="Designer">Designer</option>
+            <option value="Writer">Writer</option>
+            <option value="Artist">Artist</option>
+            <option value="Musician">Musician</option>
+            <option value="Educator">Educator</option>
+            <option value="Content Creator">Content Creator</option>
+          </select>
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="goal" className='text-sm text-neutral-400'>Goal</label>
-          <input value={form.goal} onChange={(e) => setForm({...form,goal:e.target.value})} type="number" min={0} id='goal'  className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+          <input value={form.goal} onChange={(e) => setForm({ ...form, goal: e.target.value })} type="number" min={0} id='goal' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="Banner" className='text-sm text-neutral-400'>Cover Picture</label>
@@ -145,7 +181,7 @@ const dashboard = () => {
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="RazorPay_SECRET" className='text-sm text-neutral-400'>Razorpay SECRET</label>
-          <input placeholder={hasRazorpaySecret?"Secret Saved":"Enter Razorpay Secret"} value={form.razorpaySecret} onChange={(e) => setForm({ ...form, razorpaySecret: e.target.value })} type="password" id='RazorPay_SECRET' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
+          <input placeholder={hasRazorpaySecret ? "Secret Saved" : "Enter Razorpay Secret"} value={form.razorpaySecret} onChange={(e) => setForm({ ...form, razorpaySecret: e.target.value })} type="password" id='RazorPay_SECRET' className='bg-neutral-800/40 border border-white/10 rounded-lg p-2 text-white ' />
         </div>
         <button type='submit' className='w-full bg-neutral-600 hover:bg-neutral-600/50 text-white font-bold py-3 rounded-lg mt-4 transition-all cursor-pointer'>Save Changes</button>
       </form>

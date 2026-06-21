@@ -7,9 +7,10 @@ const creatorsPage = () => {
     const [creators, setCreators] = useState([]);
     const [lastPage, setLastPage] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [selectedTag, setSelectedTag] = useState("All");
     const fetchData = async () => {
         setLoading(true);
-        const res = await fetch(`/api/creators?page=${page}&limit=20`);
+        const res = await fetch(`/api/creators?page=${page}&limit=20&tag=${selectedTag}`);
         const data = await res.json();
         setCreators(data.creators);
         setLastPage(Math.ceil(data.totalCreators / 20));
@@ -21,10 +22,27 @@ const creatorsPage = () => {
             top: 0,
             behavior: "smooth"
         });
-    }, [page])
+    }, [page, selectedTag])
+    const tags = ["All","Developer","Desiogner","Writer","Artist","Musician","Educator","Content Creator"];
     return (
-        <div className='pt-20'>
+        <div className='pt-20 text-white'>
             <h1 className='text-white text-4xl font-black text-center pb-8'>All Creators</h1>
+            <div className="flex flex-wrap justify-center gap-3 mb-10">
+                <div className="flex flex-wrap justify-center gap-3 mb-10">
+                    {tags.map(item=>(
+                        <button
+                            key={item}
+                            onClick={() => {
+                                setSelectedTag(item);
+                                setPage(1);
+                            }}
+                            className={`px-4 py-2 rounded-full text-sm font-semibold border border-white/10 transition-all cursor-pointer ${selectedTag === item? "bg-violet-600 text-white": "bg-neutral-900 text-neutral-400 hover:text-white hover:border-white/20"}`}>
+                                {item}
+                        </button>
+                    ))}
+                </div>
+
+            </div>
             <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3'>
                 {loading ? (
                     <div className='col-span-full text-center text-white text-xl font-semibold'>Loading...</div>
@@ -33,7 +51,7 @@ const creatorsPage = () => {
                         <div className='col-span-full text-center text-neutral-400 py-20 text-xl font-bold'>No creators found</div>
                     ) : (
                         creators.map(item => (
-                            <Card key={item._id} name={item.name} username={item.username} coverpic={item.coverpic} profilepic={item.profilepic} totalSupporters={item.totalSupporters} percentGoal={item.goal > 0 ? (item.totalAmount / item.goal) * 100 : 0} />
+                            <Card key={item._id} name={item.name} username={item.username} tag={item.tag} coverpic={item.coverpic} profilepic={item.profilepic} totalSupporters={item.totalSupporters} percentGoal={item.goal > 0 ? (item.totalAmount / item.goal) * 100 : 0} />
                         ))
                     ))
                 }

@@ -12,7 +12,7 @@ const Navbar = () => {
   const [results, setResults] = useState([])
   const [loading,setLoading] = useState(false);
   const searchRef = useRef()
-  const inpiutRef = useRef();
+  const inputRef = useRef();
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -30,6 +30,7 @@ const Navbar = () => {
       if (e.key==="Escape") {
         setSearchOpen(false);
         setQuery("");
+        setResults([]);
       }
     }
     document.addEventListener("keydown", handleEsc)
@@ -42,6 +43,7 @@ const Navbar = () => {
     if (!query.trim()) {
       setResults([]);
       setLoading(false);
+      setResults([]);
       return;
     }
     const timer = setTimeout(async () => {
@@ -59,7 +61,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (searchOpen) {
-      inpiutRef.current.focus();
+      inputRef.current.focus();
     }
   }, [searchOpen])
 
@@ -74,14 +76,14 @@ const Navbar = () => {
           ) : (
             <div className='relative'>
               <div className="relative flex items-center gap-2">
-                <input ref={inpiutRef} value={query} onChange={(e) => setQuery(e.target.value)} placeholder='Search Creators' className='w-64 bg-neutral-900 border border-white/10 rounded-lg px-3 py-1 text-sm' type="text" />
+                <input ref={inputRef} value={query} onChange={(e) => setQuery(e.target.value)} placeholder='Search Creators' className='w-64 bg-neutral-900 border border-white/10 rounded-lg px-3 py-1 text-sm' type="text" />
                 <button onClick={(e) => {
                   setQuery("")
                   setSearchOpen(false)
                 }} className='text-white/50 hover:text-white'><IoIosCloseCircle /></button>
               </div>
               {query.trim() && (
-                <div className="absolute top-full left-0 mt-2 w-full bg-neutral-900 border border-white/10 rounded-xl overflow-hidden">
+                <div className="absolute top-full left-0 mt-2 w-80 bg-neutral-900 border border-white/10 rounded-xl overflow-hidden">
                   {loading?(
                     <div className="p-6 text-neutral-400">
                       Searching...
@@ -95,9 +97,12 @@ const Navbar = () => {
                     }} href={`/${item.username}`} key={item._id} className="p-3 flex hover:bg-neutral-800 cursor-pointer gap-3">
                       <img
                         src={!item.profilepic?"https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=200&auto=format&fit=crop":item.profilepic} className="w-8 h-8 rounded-full object-cover" alt=""/>
-                      <div>
+                      <div className='flex flex-col w-full'>
                         <div>{item.name}</div>
-                        <div className='text-xs text-neutral-400'>@{item.username}</div>
+                        <div className="flex justify-between items-center w-full">
+                          <div className='text-xs text-neutral-400'>@{item.username}</div>
+                          <div className='text-xs font-bold text-neutral-500'>{item.tag}</div>
+                        </div>
                       </div>
                     </Link>)
                   }

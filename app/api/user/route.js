@@ -15,6 +15,8 @@ const isValidUrl = (url) => {
     }
 }
 
+const tags = ["All","Developer","Desiogner","Writer","Artist","Musician","Educator","Content Creator"];
+
 export async function POST(request) {
     try {
         await connectDb()
@@ -26,7 +28,7 @@ export async function POST(request) {
             }, { status: 401 })
         }
         const body = await request.json()
-        const { name, username,tagline,goal, profilepic, coverpic, razorpayId, razorpaySecret, } = body;
+        const { name, username,tagline,tag,goal, profilepic, coverpic, razorpayId, razorpaySecret, } = body;
         const reserved = ["login", "dashboard", "api"];
         if (username.length < 3) {
             return NextResponse.json({
@@ -76,6 +78,12 @@ export async function POST(request) {
                 message:"Tagline cannot exceed 100 charachters"
             },{status:400})
         }
+        if(!tags.includes(tag)){
+            return NextResponse.json({
+                success:false,
+                message:"Invalid Tag"
+            },{status:400})
+        }
         const existingUser = await User.findOne({ username: username })
         const email = session.user.email
         if (existingUser && existingUser.email !== email) {
@@ -90,6 +98,7 @@ export async function POST(request) {
             profilepic,
             coverpic,
             tagline,
+            tag,
             goal,
             razorpayId,
         };
@@ -135,6 +144,7 @@ export async function GET(request) {
         email:user.email,
         username:user.username,
         tagline:user.tagline,
+        tag:user.tag,
         goal:user.goal,
         profilepic:user.profilepic,
         coverpic:user.coverpic,

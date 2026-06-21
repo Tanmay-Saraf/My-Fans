@@ -23,6 +23,11 @@ const UserSchema = new mongoose.Schema({
         type:String,
         deault:"",
     },
+    tag:{
+        type:String,
+        enum:["Developer","Designer","Writer","Artist","Musician","Educator","Content Creator"],
+        default:"Developer",
+    },
     goal:{
         type:Number,
         required:true,

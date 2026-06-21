@@ -7,7 +7,7 @@ import Script from 'next/script'
 const UsernameClient = ({ username }) => {
     const { data: session, status } = useSession()
     const [notFound, setNotFound] = useState(false)
-    const [dynaData, setDynaData] = useState({ username, tagline: "", goal: 0, profilepic: "", coverpic: "" })
+    const [dynaData, setDynaData] = useState({ username, tagline: "",tag:"Developer", goal: 0, profilepic: "", coverpic: "" })
     const [payments, setPayments] = useState([])
     const supporters = payments.length;
     const totaAmount = payments.reduce((sum, p) => sum + p.amount, 0)
@@ -20,7 +20,7 @@ const UsernameClient = ({ username }) => {
             return;
         }
         const data = await res.json();
-        setDynaData({ username: data.user.username, tagline: data.user.tagline, goal: data.user.goal, profilepic: data.user.profilepic, coverpic: data.user.coverpic })
+        setDynaData({ username: data.user.username, tagline: data.user.tagline,tag:data.user.tag, goal: data.user.goal, profilepic: data.user.profilepic, coverpic: data.user.coverpic })
         setPayments(data.payments);
         console.log(data.user.tagline);
     }
@@ -120,12 +120,17 @@ const UsernameClient = ({ username }) => {
                     </div>
                     <div className="info pt-20 gap-4 flex flex-col justify-center items-center">
                         <div className="name tracking-wider text-2xl font-black">@{dynaData.username}</div>
+                        <div className="px-3 py-1 rounded-full bg-neutral-800 text-sm">{dynaData.tag}</div>
                         <div className="tagline text-sm text-neutral-300 font-medium">{dynaData.tagline}</div>
                         <div className="tagline text-sm text-neutral-300 font-medium">Goal: ₹{dynaData.goal||0}</div>
                         <div className="w-full max-w-md bg-neutral-800 h-2 rounded-full">
                             <div className="bg-violet-500 h-2 rounded-full" style={{ width: `${dynaData.goal>0?Math.min((totaAmount/dynaData.goal)*100,100):0}` }} />
                         </div>
                         <div className='text-lg text-neutral-200 '>{supporters} supporters &middot; ₹{totaAmount} raised</div>
+                        <button className="share bg-neutral-800 hover:bg-neutral-700 hover:-translate-y-0.5  px-4 py-2 rounded-xl font-bold text-lg transition-all duration-300 cursor-grabbing" title='Share Profile link' onClick={()=>{
+                            navigator.clipboard.writeText(`${window.location.origin}/${dynaData.username}`)
+                            alert("Profile link copied!");
+                        }}  >Share Profile</button>
                     </div>
                 </div>
                 <div className="payment grid grid-cols-2 gap-3">
