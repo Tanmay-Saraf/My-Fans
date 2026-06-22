@@ -1,13 +1,17 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import Card from '@/components/Card';
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-const creatorsPage = () => {
+const creatorsPage = () => {    
     const [page, setPage] = useState(1);
     const [creators, setCreators] = useState([]);
     const [lastPage, setLastPage] = useState(1);
     const [loading, setLoading] = useState(false);
+    const searchParams = useSearchParams()
     const [selectedTag, setSelectedTag] = useState("All");
+    
     const fetchData = async () => {
         setLoading(true);
         const res = await fetch(`/api/creators?page=${page}&limit=20&tag=${selectedTag}`);
@@ -23,7 +27,17 @@ const creatorsPage = () => {
             behavior: "smooth"
         });
     }, [page, selectedTag])
-    const tags = ["All","Developer","Desiogner","Writer","Artist","Musician","Educator","Content Creator"];
+    const tags = ["All","Developer","Designer","Writer","Artist","Musician","Educator","Content Creator"];
+    useEffect(() => {
+        const tagUrl = searchParams.get("tag")
+        if(tags.includes(tagUrl)){
+            setSelectedTag(tagUrl)
+        }else{
+            setSelectedTag("All");
+        }
+        setPage(1);
+    }, [searchParams])
+    const router = useRouter();
     return (
         <div className='pt-20 text-white'>
             <h1 className='text-white text-4xl font-black text-center pb-8'>All Creators</h1>
@@ -33,8 +47,8 @@ const creatorsPage = () => {
                         <button
                             key={item}
                             onClick={() => {
-                                setSelectedTag(item);
                                 setPage(1);
+                                router.push(`/creators?tag=${encodeURIComponent(item)}`);
                             }}
                             className={`px-4 py-2 rounded-full text-sm font-semibold border border-white/10 transition-all cursor-pointer ${selectedTag === item? "bg-violet-600 text-white": "bg-neutral-900 text-neutral-400 hover:text-white hover:border-white/20"}`}>
                                 {item}

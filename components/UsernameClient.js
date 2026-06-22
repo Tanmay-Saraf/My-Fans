@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Script from 'next/script'
+import { toast } from 'react-toastify'
 
 const UsernameClient = ({ username }) => {
     const { data: session, status } = useSession()
@@ -42,11 +43,11 @@ const UsernameClient = ({ username }) => {
     }
     const pay = async (amount) => {
         if (!amount || isNaN(amount) || Number(amount) <= 0) {
-            alert("Please enter a valid amount");
+            toast.warning("Please enter a valid amount");
             return;
         }
         if (Number(amount) > 100000) {
-            alert("Amount must be between ₹1 to ₹100000")
+            toast.warning("Amount must be between ₹1 to ₹100000")
             return;
         }
         const res = await fetch("/api/razorpay", {
@@ -62,7 +63,7 @@ const UsernameClient = ({ username }) => {
         })
 
         if (!res.ok) {
-            alert("unable to proceed with the payment");
+            toast.error("unable to proceed with the payment");
             return;
         }
         const order = await res.json()
@@ -94,11 +95,11 @@ const UsernameClient = ({ username }) => {
                 })
                 const verifyData = await verifyRes.json()
                 if(!verifyData.success){
-                    alert("Payment not verified")
+                    toast.error("Payment not verified")
                     return ;
                 }
                 await fillData();
-                alert("Payment Successful")
+                toast.success("Payment Successful")
                 setMessage("")
                 setAmount("");
             },
@@ -127,9 +128,9 @@ const UsernameClient = ({ username }) => {
                             <div className="bg-violet-500 h-2 rounded-full" style={{ width: `${dynaData.goal>0?Math.min((totaAmount/dynaData.goal)*100,100):0}` }} />
                         </div>
                         <div className='text-lg text-neutral-200 '>{supporters} supporters &middot; ₹{totaAmount} raised</div>
-                        <button className="share bg-neutral-800 hover:bg-neutral-700 hover:-translate-y-0.5  px-4 py-2 rounded-xl font-bold text-lg transition-all duration-300 cursor-grabbing" title='Share Profile link' onClick={()=>{
+                        <button className="share bg-neutral-800 hover:bg-neutral-700 hover:-translate-y-0.5  px-4 py-2 rounded-xl font-bold text-lg transition-all duration-300 cursor-pointer" title='Share Profile link' onClick={()=>{
                             navigator.clipboard.writeText(`${window.location.origin}/${dynaData.username}`)
-                            alert("Profile link copied!");
+                            toast.success("Profile link copied!");
                         }}  >Share Profile</button>
                     </div>
                 </div>

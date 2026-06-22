@@ -12,7 +12,7 @@ const Card = ({name,username,tag,profilepic,coverpic,percentGoal,totalSupporters
                     <img className="rounded-xl w-16 h-16 object-cover" src={!profilepic?"https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=200&auto=format&fit=crop":profilepic} alt="" />
                 </div>
                 <div className="flex justify-end mb-2">
-                    <span className="text-xs bg-neutral-800 font-bold uppercase tracking-widest p-2 rounded-xl border border-white/50 ">{tag}</span>
+                    <Link href={`/creators?tag=${encodeURIComponent(tag)}`} className="text-xs bg-neutral-800 font-bold uppercase tracking-widest p-2 rounded-xl border border-white/50 ">{tag}</Link>
                 </div>
                 <div className="flex flex-col mt-3 mb-3">
                     <h1 className="font-bold text-xl text-white">{name}</h1>

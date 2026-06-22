@@ -2,6 +2,7 @@
 import { useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 const dashboard = () => {
   const { data: session, status, update } = useSession()
@@ -67,31 +68,31 @@ const dashboard = () => {
     console.log("Save button clicked")
     const username = form.username.trim()
     if (username.length < 3) {
-      alert("username must be at least 3 charcters")
+      toast.warning("username must be at least 3 charcters")
       return;
     }
     if (username.length > 20) {
-      alert("Username cannot exceed 20 characters")
+      toast.warning("Username cannot exceed 20 characters")
       return;
     }
     if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      alert("Username can only contain letters, numbers and underscores");
+      toast.warning("Username can only contain letters, numbers and underscores");
       return;
     }
     if (form.coverpic && !isValidUrl(form.coverpic)) {
-      alert("Invalid cover picture URL")
+      toast.warning("Invalid cover picture URL")
       return;
     }
     if (form.profilepic && !isValidUrl(form.profilepic)) {
-      alert("Invalid profile picture URL")
+      toast.warning("Invalid profile picture URL")
       return;
     }
     if (form.tagline.length > 100) {
-      alert("Tagline cannot exceed 100 charcters")
+      toast.warning("Tagline cannot exceed 100 charcters")
       return;
     }
     if (isNaN(form.goal) || Number(form.goal) < 0) {
-      alert("Goal cannot be less than zero")
+      toast.warning("Goal cannot be less than zero")
       return;
     }
     const res = await fetch('/api/user', {
@@ -104,9 +105,9 @@ const dashboard = () => {
     const data = await res.json();
     if (data.success) {
       await update();
-      alert("Profile Updated");
+      toast.success("Profile Updated");
     } else {
-      alert(data.message);
+      toast.error(data.message);
     }
   };
 
