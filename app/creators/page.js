@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Card from '@/components/Card';
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation';
+import { motion} from 'motion/react';
 
 const creatorsPage = () => {    
     const [page, setPage] = useState(1);
@@ -57,15 +58,17 @@ const creatorsPage = () => {
                 </div>
 
             </div>
-            <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3'>
+            <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3  ml-6 mr-6'>
                 {loading ? (
                     <div className='col-span-full text-center text-white text-xl font-semibold'>Loading...</div>
                 ) :
                     (creators.length === 0 ? (
                         <div className='col-span-full text-center text-neutral-400 py-20 text-xl font-bold'>No creators found</div>
                     ) : (
-                        creators.map(item => (
-                            <Card key={item._id} name={item.name} username={item.username} tag={item.tag} coverpic={item.coverpic} profilepic={item.profilepic} totalSupporters={item.totalSupporters} percentGoal={item.goal > 0 ? (item.totalAmount / item.goal) * 100 : 0} />
+                        creators.map((item,index) => (
+                            <motion.div className='max-w-sm mx-auto' key={item._id} initial={{opacity:0,y:50}} animate={{opacity:1,y:0}} transition={{duration:0.7, delay:index*0.04}}>
+                                <Card  name={item.name} username={item.username} tag={item.tag} coverpic={item.coverpic} profilepic={item.profilepic} totalSupporters={item.totalSupporters} percentGoal={item.goal > 0 ? (item.totalAmount / item.goal) * 100 : 0} />
+                            </motion.div>
                         ))
                     ))
                 }

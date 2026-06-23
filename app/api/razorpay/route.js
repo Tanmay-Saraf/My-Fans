@@ -3,8 +3,17 @@ import Payment from "@/models/Payment";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/options";
 
 export async function POST(request){
+    const session = await getServerSession(authOptions);
+    if(!session){
+        return NextResponse.json({
+            success:false,
+            message:"Login to make a payment"
+        },{status:400})
+    }
     await connectDb();
     const body = await request.json();
 
@@ -19,7 +28,7 @@ export async function POST(request){
     if(!creator||!creator.razorpayId||!creator.razorpaySecret){
         return NextResponse.json({
             success:false,
-            messgae:"Creattor has not  set up payments yet"
+            message:"Creattor has not  set up payments yet"
         },{status:400});
     }
     const instance = new Razorpay({

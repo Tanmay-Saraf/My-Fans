@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema({
     },
     tagline:{
         type:String,
-        deault:"",
+        default:"",
     },
     tag:{
         type:String,
@@ -30,6 +30,7 @@ const UserSchema = new mongoose.Schema({
     },
     goal:{
         type:Number,
+        default:0,
         required:true,
     },
     razorpayId:{

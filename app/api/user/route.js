@@ -15,7 +15,7 @@ const isValidUrl = (url) => {
     }
 }
 
-const tags = ["All","Developer","Desiogner","Writer","Artist","Musician","Educator","Content Creator"];
+const tags = ["All","Developer","Designer","Writer","Artist","Musician","Educator","Content Creator"];
 
 export async function POST(request) {
     try {

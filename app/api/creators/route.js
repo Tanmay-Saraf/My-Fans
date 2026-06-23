@@ -7,10 +7,11 @@
         await connectDb()
         const { searchParams } = new URL(request.url);
         const search = searchParams.get("q") || "";
+        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
         const tag = searchParams.get("tag")||"All";
         const query = {
             username:{
-                $regex: search,
+                $regex: escapedSearch,
                 $options:"i"
             }
         }
